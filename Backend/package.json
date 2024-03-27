@@ -11,10 +11,13 @@
     "license": "ISC",
     "dependencies": {
         "bcryptjs": "^2.4.3",
+        "clamscan": "^2.2.1",
         "cors": "^2.8.5",
+        "dompurify": "^3.0.11",
         "dotenv": "^15.0.0",
         "express": "^4.17.2",
         "express-async-handler": "^1.2.0",
+        "jsdom": "^24.0.0",
         "jsonwebtoken": "^8.5.1",
         "mongoose": "^6.1.8",
         "multer": "^1.4.4",
@@ -22,6 +25,9 @@
         "nodemon": "^2.0.15",
         "path": "^0.12.7",
         "pm2": "^5.3.0",
-        "slugify": "^1.6.5"
+        "sanitize": "^2.1.2",
+        "sanitize-html": "^2.13.0",
+        "slugify": "^1.6.5",
+        "validator": "^13.11.0"
     }
 }

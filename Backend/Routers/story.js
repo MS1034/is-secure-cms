@@ -1,26 +1,58 @@
-const express = require("express")
+const express = require("express");
 const imageupload = require("../Helpers/Libraries/imageUpload");
 
 const { getAccessToRoute } = require("../Middlewares/Authorization/auth");
-const {addStory,getAllStories,detailStory,likeStory, editStory, deleteStory, editStoryPage } = require("../Controllers/story")
-const { checkStoryExist, checkUserAndStoryExist } = require("../Middlewares/database/databaseErrorhandler");
+const {
+  addStory,
+  getAllStories,
+  detailStory,
+  likeStory,
+  editStory,
+  deleteStory,
+  editStoryPage,
+} = require("../Controllers/story");
+const {
+  checkStoryExist,
+  checkUserAndStoryExist,
+} = require("../Middlewares/database/databaseErrorhandler");
+const sanitizeContent = require("../Middlewares/Sanitization/sanitize-content");
 
-const router = express.Router() ;
+const router = express.Router();
 
-router.post("/addstory" ,[getAccessToRoute, imageupload.single("image")],addStory)
+router.post(
+  "/addstory",
+  [getAccessToRoute, sanitizeContent, imageupload.single("image")],
+  addStory
+);
 
+router.post("/:slug", checkStoryExist, detailStory);
 
-router.post("/:slug", checkStoryExist, detailStory)
+router.post("/:slug/like", [getAccessToRoute, checkStoryExist], likeStory);
 
-router.post("/:slug/like",[getAccessToRoute,checkStoryExist] ,likeStory)
+router.get(
+  "/editStory/:slug",
+  [getAccessToRoute, checkStoryExist, checkUserAndStoryExist],
+  editStoryPage
+);
 
-router.get("/editStory/:slug",[getAccessToRoute,checkStoryExist,checkUserAndStoryExist] , editStoryPage)
+router.put(
+  "/:slug/edit",
+  [
+    getAccessToRoute,
+    checkStoryExist,
+    checkUserAndStoryExist,
+    sanitizeContent,
+    imageupload.single("image"),
+  ],
+  editStory
+);
 
-router.put("/:slug/edit",[getAccessToRoute,checkStoryExist,checkUserAndStoryExist, imageupload.single("image")] ,editStory)
+router.delete(
+  "/:slug/delete",
+  [getAccessToRoute, checkStoryExist, checkUserAndStoryExist],
+  deleteStory
+);
 
-router.delete("/:slug/delete",[getAccessToRoute,checkStoryExist,checkUserAndStoryExist] ,deleteStory)
+router.get("/getAllStories", getAllStories);
 
-router.get("/getAllStories",getAllStories)
-
-
-module.exports = router
+module.exports = router;
