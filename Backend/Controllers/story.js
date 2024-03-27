@@ -229,6 +229,7 @@ function sanitizeContent(content) {
   console.log(validatedHtml);
 
   return validatedHtml;
+}
 
 // Function to escape HTML characters
 function escapeHtml(html) {

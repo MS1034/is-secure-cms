@@ -6,6 +6,7 @@ const path = require("path");
 const IndexRoute = require("./Routers/index");
 const connectDatabase = require("./Helpers/database/connectDatabase");
 const customErrorHandler = require("./Middlewares/Errors/customErrorHandler");
+const securityMiddleware = require('./Middlewares/Security Headers/securityMiddleware.js');
 
 // dotenv.config({
 //     path:  './Config/config.env'
@@ -22,6 +23,7 @@ app.use(cors());
 app.use("/", IndexRoute);
 
 app.use(customErrorHandler);
+app.use(securityMiddleware());
 
 const PORT = process.env.PORT || 5000;
 

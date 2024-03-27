@@ -45,7 +45,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 // Initialize ClamScan
-const clamscan = new NodeClam().init();
+// const clamscan = new NodeClam().init();
 
 const imageUpload = multer({
   storage,
