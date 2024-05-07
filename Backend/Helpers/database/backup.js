@@ -13,7 +13,10 @@ function getDateTimeStamp() {
 function backup() {
   const dateTimeStamp = getDateTimeStamp();
   const backupPath = `./Backups/${dateTimeStamp}`;
-  const backupCommand = `mongodump --uri=${process.env.MONGO_URI} --out=${backupPath}`;
+  const dbName="cms"
+  const backupCommand = `mongodump --uri=${process.env.MONGO_URI} --out=${backupPath}
+  `;
+  console.log(backupCommand)
   exec(backupCommand, (error, stdout, stderr) => {
     if (error) {
       console.error(`Backup process encountered an error: ${error}`);
@@ -79,12 +82,14 @@ function findLatestBackup() {
   // Restore function
   function restore() {
     const latestBackup = findLatestBackup();
+    console.log(latestBackup)
     if (!latestBackup) {
       console.log("No backups found for restore");
       return;
     }
   
-    const restoreCommand = `mongorestore --uri=${process.env.MONGO_URI} ${latestBackup}`;
+    const restoreCommand = `mongorestore --uri=${process.env.MONGO_URI} ${latestBackup}/cms`;
+    console.log(restoreCommand)
     exec(restoreCommand, (error, stdout, stderr) => {
       if (error) {
         console.error(`Restore process encountered an error: ${error}`);

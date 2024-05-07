@@ -41,7 +41,12 @@ deleteOldBackups();
 //   restore();
 // });
 
-
+// let a=true
+// if(a){
+//   backup()
+//   restore();
+//   a=false
+// }
 
 
 const server = app.listen(PORT, () => {
