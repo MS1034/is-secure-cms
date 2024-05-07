@@ -106,6 +106,11 @@ const login  = asyncErrorWrapper (async(req,res,next) => {
     const eventData = { userId: user._id }; 
     const eventLog = new EventLog({ eventType: EventType.USER_LOGIN, eventData });
     await LogActivity.addEventLog(eventLog);
+
+    req.session.user = user; // Assuming `user` is the logged-in user object
+    req.session.isLoggedIn = true;
+    const expiryTime = Date.now() + req.session.cookie.maxAge; // Assuming a maxAge of 24 hours
+    process.env.SESSION_EXPIRY_TIME = expiryTime.toString();
     sendToken(user ,200,res)  ;
     
 })

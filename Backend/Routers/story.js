@@ -1,5 +1,6 @@
 const express = require("express");
 const imageupload = require("../Helpers/Libraries/imageUpload");
+const {sessionExpiredMiddleware} = require("../Middlewares/Session/sessionExpiryChecker");
 
 const { getAccessToRoute } = require("../Middlewares/Authorization/auth");
 const {
@@ -53,6 +54,6 @@ router.delete(
   deleteStory
 );
 
-router.get("/getAllStories", getAllStories);
+router.get("/getAllStories", sessionExpiredMiddleware, getAllStories);
 
 module.exports = router;

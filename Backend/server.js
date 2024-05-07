@@ -3,6 +3,8 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const cron = require('node-cron');
 const path = require("path");
+const session = require('express-session');
+const sessionMiddleware = require("./Middlewares/Session/sessionMiddleware");
 
 const IndexRoute = require("./Routers/index");
 const connectDatabase = require("./Helpers/database/connectDatabase");
@@ -20,6 +22,22 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
+
+app.use(session({
+  secret: 'secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false, 
+    httpOnly: true,
+    maxAge: 1* 1* 30 * 1000, 
+  },
+}));
+
+// app.use((req,res,next) => {
+//   console.log(req.session);
+//   next();
+// })
 
 app.get("/", (req, res) => {
   res.send("Backend Running");

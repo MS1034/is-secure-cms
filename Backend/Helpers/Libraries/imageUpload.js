@@ -45,15 +45,15 @@ const fileFilter = (req, file, cb) => {
 };
 
 // Initialize ClamScan
-const clamscan = new NodeClam();
+// const clamscan = new NodeClam();
 
-clamscan.init({
-  clamdscan: {
-    path: '/usr/bin/clamdscan', // Path to clamdscan binary on your server
-    config_file: '/etc/clamd.d/scan.conf', // Path to ClamAV config file on your server
-  },
-  preference: 'clamdscan',
-});
+// clamscan.init({
+//   clamdscan: {
+//     path: '/usr/bin/clamdscan', // Path to clamdscan binary on your server
+//     config_file: '/etc/clamd.d/scan.conf', // Path to ClamAV config file on your server
+//   },
+//   preference: 'clamdscan',
+// });
 
 const imageUpload = multer({
   storage,
