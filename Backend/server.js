@@ -6,7 +6,7 @@ const path = require("path");
 const IndexRoute = require("./Routers/index");
 const connectDatabase = require("./Helpers/database/connectDatabase");
 const customErrorHandler = require("./Middlewares/Errors/customErrorHandler");
-const securityMiddleware = require('./Middlewares/Security Headers/securityMiddleware.js');
+const securityMiddleware = require("./Middlewares/Security Headers/securityMiddleware");
 
 // dotenv.config({
 //     path:  './Config/config.env'

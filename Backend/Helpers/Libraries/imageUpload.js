@@ -45,7 +45,15 @@ const fileFilter = (req, file, cb) => {
 };
 
 // Initialize ClamScan
-// const clamscan = new NodeClam().init();
+const clamscan = new NodeClam();
+
+clamscan.init({
+  clamdscan: {
+    path: '/usr/bin/clamdscan', // Path to clamdscan binary on your server
+    config_file: '/etc/clamd.d/scan.conf', // Path to ClamAV config file on your server
+  },
+  preference: 'clamdscan',
+});
 
 const imageUpload = multer({
   storage,
@@ -79,7 +87,7 @@ imageUpload.singleWithScan = function (field) {
 
       try {
         const scanResult = await scanFile(req.file);
-
+        console.log("scan result:", scanResult);
         if (scanResult.is_infected) {
           // Handle infected file
           return next(new CustomError("Malicious file detected", 400));

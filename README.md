@@ -153,14 +153,12 @@ This project was created using the following technologies.
 
 ![11](https://user-images.githubusercontent.com/111676859/226197338-3e530bc6-e7bf-4e4a-9284-165f85be47d2.png)
 
-## Author
-
-This author of this project is Gilbert Hutapea. I am using the to add security to this project.
-
-- Portfolio: [berthutapea](https://berthutapea.vercel.app/)
-- Github: [berthutapea](https://github.com/berthutapea)
-- Sponsor: [berthutapea](https://saweria.co/berthutapea)
-- Linkedin: [gilberthutapea](https://www.linkedin.com/in/gilberthutapea/)
-- Email: [berthutapea@gmail.com](mailto:berthutapea@gmail.com)
-
 ## Securiy Improvements
+
+1. Data encryption
+2. Sanitization
+3. Authorization and Authentication
+4. Secure File Upload
+5. XSS Protection
+6. CRSF Protection
+7. JWT Token Timeout
