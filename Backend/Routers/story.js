@@ -21,7 +21,7 @@ const router = express.Router();
 
 router.post(
   "/addstory",
-  [getAccessToRoute, sanitizeContent, imageupload.single("image")],
+  [getAccessToRoute, sanitizeContent, imageupload.singleWithScan("image")],
   addStory
 );
 
@@ -42,7 +42,7 @@ router.put(
     checkStoryExist,
     checkUserAndStoryExist,
     sanitizeContent,
-    imageupload.single("image"),
+    imageupload.singleWithScan("image")
   ],
   editStory
 );
