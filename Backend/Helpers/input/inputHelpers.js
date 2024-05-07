@@ -9,7 +9,6 @@ const validateUserInput =(email,password) =>{
 }
 
 const comparePassword =  (password , hashedPassword) =>{
-
     return  bycrpt.compareSync(password,hashedPassword)
 
 }

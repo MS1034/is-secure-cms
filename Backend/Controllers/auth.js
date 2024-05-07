@@ -4,6 +4,46 @@ const CustomError = require("../Helpers/error/CustomError");
 const { sendToken } = require("../Helpers/auth/tokenHelpers");
 const sendEmail = require("../Helpers/Libraries/sendEmail");
 const { validateUserInput,comparePassword } = require("../Helpers/input/inputHelpers");
+const EventLog = require('../Models/EventLog');
+const LogActivity = require('../Controllers/eventLogController');
+const { EventType } = require('../constants');
+
+const changePassword = asyncErrorWrapper(async (req, res, next) => {
+    const { newPassword, oldPassword } = req.body;
+
+    if (!validateUserInput(newPassword, oldPassword)) {
+        return next(new CustomError("Please check your inputs", 400));
+    }
+
+    const user = await User.findById(req.user.id).select("+password");
+
+    if (!comparePassword(oldPassword, user.password)) {
+        return next(new CustomError('Old password is incorrect', 400));
+    }
+
+    // Update user's password
+    user.password = newPassword;
+    await user.save();
+
+    // Log the password change event
+    const eventData = {
+        UserId: user._id, // Assuming user._id is the unique identifier for the user
+    };
+
+    const eventLog = new EventLog.create({
+        eventType: EventType.PASSWORD_CHANGE,
+        eventData,
+    });
+
+    await LogActivity.addEventLog(eventLog);
+
+    return res.status(200).json({
+        success: true,
+        message: "Change Password Successfully",
+        user: user
+    });
+});
+
 
 const getPrivateData = asyncErrorWrapper((req,res,next) =>{
 
@@ -26,6 +66,10 @@ const register = asyncErrorWrapper (async  (req,res,next) => {
         password
     })
     
+    const eventData = { userId: newUser._id}; 
+    const eventLog = new EventLog({ eventType: EventType.USER_REGISTRATION, eventData });
+    await LogActivity.addEventLog(eventLog);
+
     sendToken(newUser ,201,res)
   
 
@@ -43,18 +87,28 @@ const login  = asyncErrorWrapper (async(req,res,next) => {
     const user = await User.findOne({email}).select("+password")
 
     if(!user) {
-        
+        const eventData = { emailTried: email, passwordTried: password }; 
+        const eventLog = new EventLog({ eventType: EventType.FAILED_LOGIN_ATTEMPT, eventData });
+        await LogActivity.addEventLog(eventLog);
+
         return next(new CustomError("Invalid credentials",404))
     }
 
     if(!comparePassword(password,user.password)){
-        return next(new CustomError("Please chech your credentails",404))
+        const eventData = { emailTried: email, passwordTried: password }; 
+        const eventLog = new EventLog({ eventType: EventType.FAILED_LOGIN_ATTEMPT, eventData });
+        await LogActivity.addEventLog(eventLog);
+
+        return next(new CustomError("Please check your credentails",404))
     }
 
+
+    const eventData = { userId: user._id }; 
+    const eventLog = new EventLog({ eventType: EventType.USER_LOGIN, eventData });
+    await LogActivity.addEventLog(eventLog);
     sendToken(user ,200,res)  ;
     
 })
-
 
 
 

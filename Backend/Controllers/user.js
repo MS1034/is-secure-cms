@@ -3,6 +3,9 @@ const User = require("../Models/user");
 const Story = require("../Models/story");
 const CustomError = require("../Helpers/error/CustomError");
 const { comparePassword, validateUserInput } = require("../Helpers/input/inputHelpers");
+const EventLog = require('../Models/EventLog');
+const { EventType } = require('../constants');
+const LogActivity = require('../Controllers/eventLogController');
 
 const profile = asyncErrorWrapper(async (req, res, next) => {
 
@@ -27,6 +30,17 @@ const editProfile = asyncErrorWrapper(async (req, res, next) => {
             runValidators: true
         })
 
+    const eventData = {
+        UserId: user._id, 
+    };
+
+    const eventLog = await EventLog.create({
+        eventType: EventType.PROFILE_UPDATE,
+        eventData,
+    });
+
+    await LogActivity.addEventLog(eventLog);
+
     return res.status(200).json({
         success: true,
         data: user
@@ -35,36 +49,44 @@ const editProfile = asyncErrorWrapper(async (req, res, next) => {
 
 })
 
-
 const changePassword = asyncErrorWrapper(async (req, res, next) => {
-
-    const { newPassword, oldPassword } = req.body
+    const { newPassword, oldPassword } = req.body;
 
     if (!validateUserInput(newPassword, oldPassword)) {
-
-        return next(new CustomError("Please check your inputs ", 400))
-
+        return next(new CustomError("Please check your inputs", 400));
     }
 
-    const user = await User.findById(req.user.id).select("+password")
+    const user = await User.findById(req.user.id).select("+password");
 
     if (!comparePassword(oldPassword, user.password)) {
-        return next(new CustomError('Old password is incorrect ', 400))
+        return next(new CustomError('Old password is incorrect', 400));
     }
 
-    user.password = newPassword
-
+    // Update user's password
+    user.password = newPassword;
     await user.save();
 
+    // Log the password change event
+    const eventData = {
+        UserId: user._id, 
+        OldPassword: oldPassword,
+        NewPassword: newPassword
+    };
+
+    const eventLog = new EventLog.create({
+        eventType: EventType.PASSWORD_CHANGE,
+        eventData,
+    });
+
+    await LogActivity.addEventLog(eventLog);
 
     return res.status(200).json({
         success: true,
-        message: "Change Password  Successfully",
+        message: "Change Password Successfully",
         user: user
+    });
+});
 
-    })
-
-})
 
 
 const addStoryToReadList = asyncErrorWrapper(async (req, res, next) => {

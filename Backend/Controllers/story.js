@@ -7,6 +7,9 @@ const {
 } = require("../Helpers/query/queryHelpers");
 const sanitizeHtml = require("sanitize-html");
 const validator = require("validator");
+const EventLog = require('../Models/EventLog');
+const LogActivity = require('../Controllers/eventLogController');
+const { EventType } = require('../constants');
 
 const addStory = asyncErrorWrapper(async (req, res, next) => {
   req.body.content = sanitizeContent(req.body.content);
@@ -142,6 +145,11 @@ const editStory = asyncErrorWrapper(async (req, res, next) => {
   }
 
   console.log(story);
+
+  const eventData = { storyId: story._id }; 
+  const eventLog = new EventLog({ eventType: EventType.BLOG_POST_UPDATE, eventData });
+  await LogActivity.addEventLog(eventLog);
+
   await story.save();
 
   return res.status(200).json({
@@ -158,6 +166,9 @@ const deleteStory = asyncErrorWrapper(async (req, res, next) => {
   deleteImageFile(req, story.image);
 
   await story.remove();
+  const eventData = { storyId: story._id }; 
+  const eventLog = new EventLog({ eventType: EventType.BLOG_POST_DELETION, eventData });
+  await LogActivity.addEventLog(eventLog);
 
   return res.status(200).json({
     success: true,
